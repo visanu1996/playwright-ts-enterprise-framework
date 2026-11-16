@@ -21,7 +21,7 @@ export abstract class SauceDemoBasePage extends BasePage {
         toast: '//h3[@data-test="error"]'
     }
     async menuSelect(menu:keyof typeof this.commonLocators.menuChoices){
-        let menuVisible = await this.runFunctionAndReturnStatus(this.verifyLocator(this.commonLocators.menuChoices[menu]))
+        let menuVisible = await this.page.locator(this.commonLocators.menuChoices[menu]).isVisible()
         if(!menuVisible) await this.click(this.commonLocators.burgerMenu)
         await this.click(this.commonLocators.menuChoices[menu])
 

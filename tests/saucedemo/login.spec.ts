@@ -1,6 +1,6 @@
-import { SauceDemoFacade } from '../src/apps/saucedemo/SauceDemoFacade'
+import { SauceDemoFacade } from '../../src/apps/saucedemo/SauceDemoFacade'
 import { test } from '@playwright/test'
-import { sdCredential } from '../config/secret'
+import { sdCredential } from '../../config/secret'
 
 test.describe('SD login page',()=>{
     let sd: SauceDemoFacade
