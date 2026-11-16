@@ -18,7 +18,14 @@ export abstract class SauceDemoBasePage extends BasePage {
         cart: '//a[@data-test="shopping-cart-link"]',
         cartBadge: '//span[@data-test="shopping-cart-badge"]',
         filter: '//select[@data-test="product-sort-container"]',
-        toast: '//h3[@data-test="error"]'
+        toast: '//h3[@data-test="error"]',
+        item : {
+            card: '//div[@data-test="inventory-item-description" and .//div[@data-test="inventory-item-name" and contains(text(),"[TO_CHANGE]")]]',
+            name: '//div[@data-test="inventory-item-name"]',
+            desc: '//div[@data-test="inventory-item-desc"]',
+            price: '//div[@data-test="inventory-item-price"]',
+            button: '//button'
+        },
     }
     async menuSelect(menu:keyof typeof this.commonLocators.menuChoices){
         let menuVisible = await this.page.locator(this.commonLocators.menuChoices[menu]).isVisible()
@@ -38,5 +45,22 @@ export abstract class SauceDemoBasePage extends BasePage {
         let target = this.page.locator(this.commonLocators.toast)
         await expect(target).toContainText(msg, {ignoreCase:true})
 
+    }
+
+    async getItemDetails(...itemsName:string[]){
+        let items : Record<string,any> = {}
+        for(let item of itemsName){
+            let card = this.page.locator(this.commonLocators.item.card.replace('[TO_CHANGE]',item))
+            let [name,desc, price, button] = await Promise.all([
+                card.locator(this.commonLocators.item.name).innerText(),
+                card.locator(this.commonLocators.item.desc).innerText(),
+                (await (card.locator(this.commonLocators.item.price).innerText())).split('$').slice(1),
+                card.locator(this.commonLocators.item.button).innerText(),
+            ])
+
+            let status:string = button === 'Remove' ? 'in-cart' : 'not-in-cart' 
+            items[name] = {'description':desc, 'price':price, 'status': status}
+        }
+        return items
     }
 }

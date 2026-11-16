@@ -14,7 +14,7 @@ test.describe('SD product page', () => {
     })
 
     test('TC001 - verify items detail is correct', async () => {
-        const items = await sd.product.getItemsDetail('Sauce Labs Backpack','Sauce Labs Bike Light')
+        const items = await sd.product.getItemDetails('Sauce Labs Backpack','Sauce Labs Bike Light')
         expect(items['Sauce Labs Backpack']).toMatchObject({price: ['29.99']})
         expect(items['Sauce Labs Bike Light']).toMatchObject({price: ['9.99']})
     })
@@ -22,7 +22,7 @@ test.describe('SD product page', () => {
     test('TC002 - adds multiple products to the cart then verify it', async () => {
         await sd.product.addItems('Sauce Labs Backpack', 'Sauce Labs Bike Light')
 
-        const items = await sd.product.getItemsDetail('Sauce Labs Backpack','Sauce Labs Bike Light')
+        const items = await sd.product.getItemDetails('Sauce Labs Backpack','Sauce Labs Bike Light')
         expect(items['Sauce Labs Backpack'].status).toBe('in-cart')
         expect(items['Sauce Labs Bike Light'].status).toBe('in-cart')
 
@@ -32,7 +32,7 @@ test.describe('SD product page', () => {
         await sd.product.addItems('Sauce Labs Backpack', 'Sauce Labs Bike Light')
         await sd.product.removeItems('Sauce Labs Backpack')
 
-        const items = await sd.product.getItemsDetail('Sauce Labs Backpack','Sauce Labs Bike Light')
+        const items = await sd.product.getItemDetails('Sauce Labs Backpack','Sauce Labs Bike Light')
         expect(items['Sauce Labs Backpack'].status).toBe('not-in-cart')
         expect(items['Sauce Labs Bike Light'].status).toBe('in-cart')
     })
@@ -52,7 +52,7 @@ test.describe('SD product page', () => {
         await sd.product.menuSelect('reset')
         await sd.product.verifyBadge(0)
 
-        const items = await sd.product.getItemsDetail('Sauce Labs Backpack','Sauce Labs Bike Light')
+        const items = await sd.product.getItemDetails('Sauce Labs Backpack','Sauce Labs Bike Light')
         expect(items['Sauce Labs Backpack'].status).toBe('not-in-cart')
         expect(items['Sauce Labs Bike Light'].status).toBe('not-in-cart')   
     })
