@@ -55,6 +55,7 @@ export class ProductPage extends SauceDemoBasePage{
 
     async enterCartPage(){
         await this.click(this.commonLocators.cart)
+        await expect(this.page.locator(this.productLocators.header)).not.toBeVisible()
     }
 
 }

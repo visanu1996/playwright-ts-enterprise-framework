@@ -2,6 +2,7 @@ import { Page } from '@playwright/test'
 import { websUrl } from '../../../config/config'
 import { LoginPage } from './pages/LoginPage'
 import { ProductPage } from './pages/ProductPage'
+import { CartPage } from './pages/CartPage'
 
 /**
  * High-level facade for the Sauce Demo application.
@@ -12,10 +13,12 @@ export class SauceDemoFacade {
     page : Page
     login : LoginPage
     product : ProductPage
+    cart : CartPage
     constructor(page:Page){
         this.page = page
         this.login = new LoginPage(page)
         this.product = new ProductPage(page)
+        this.cart = new CartPage(page)
     }
     
     /**

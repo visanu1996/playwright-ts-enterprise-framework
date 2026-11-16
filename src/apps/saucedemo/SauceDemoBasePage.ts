@@ -20,7 +20,7 @@ export abstract class SauceDemoBasePage extends BasePage {
         filter: '//select[@data-test="product-sort-container"]',
         toast: '//h3[@data-test="error"]',
         item : {
-            card: '//div[@data-test="inventory-item-description" and .//div[@data-test="inventory-item-name" and contains(text(),"[TO_CHANGE]")]]',
+            card: '//div[@data-test="inventory-item" and .//div[@data-test="inventory-item-name" and contains(text(),"[TO_CHANGE]")]]',
             name: '//div[@data-test="inventory-item-name"]',
             desc: '//div[@data-test="inventory-item-desc"]',
             price: '//div[@data-test="inventory-item-price"]',

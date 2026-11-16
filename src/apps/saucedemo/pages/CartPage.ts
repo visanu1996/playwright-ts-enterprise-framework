@@ -1,17 +1,39 @@
 import { SauceDemoBasePage } from "../SauceDemoBasePage";
+import { expect } from "@playwright/test";
 
 export class CartPage extends SauceDemoBasePage {
     cartLocators = {
+        header : 'text=Your Cart',
         allCards : '//div[@data-test="inventory-item"]',
-        item: {
-            card : '//div[@data-test="inventory-item" and .//div[@data-test="inventory-item-name" and contains(text(),"[TO_CHANGE]")]]',
-            name: '//div[@data-test="inventory-item-name"]',
-            desc: '//div[@data-test="inventory-item-desc"]',
-            price: '//div[@data-test="inventory-item-price"]',
-            button: '//button'
-        },
-
+        backToProductPageBtn: 'id=continue-shopping',
+        checkoutBtn: 'id=checkout'
     }
 
+    async verifyPageArrive(){
+        await this.verifyLocator(this.cartLocators.header)
+    }
+
+    async removeItemsFromCartPage(...itemsName:string[]){
+        for(let item of itemsName){
+            let card = this.page.locator(this.commonLocators.item.card.replace('[TO_CHANGE]',item))
+            await card.locator(this.commonLocators.item.button).click()
+            await expect(card.locator(this.commonLocators.item.button)).not.toBeVisible()
+        }
+    }
+
+    async continueShopping(){
+        await this.click(this.cartLocators.backToProductPageBtn)
+        await expect(this.page.locator(this.cartLocators.header)).not.toBeVisible()
+    }
+
+    async checkout(){
+        await this.click(this.cartLocators.checkoutBtn)
+        await expect(this.page.locator(this.cartLocators.header)).not.toBeVisible()
+    }
+
+    async verifyItemsCount(itemsCount: number){
+        let target = this.page.locator(this.cartLocators.allCards)
+        await expect(target).toHaveCount(itemsCount)
+    }
 
 }
