@@ -18,7 +18,7 @@ test.describe('SD cart page', ()=>{
     })
 
     test('TC001 - compare product items detail with cart items detail', async()=>{
-        const cartItems = await sd.cart.getItemDetails(...initialItems)
+        const cartItems = await sd.cart.getAllItemsDetails()
         expect(cartItems).toEqual(productItems)
     })
 

@@ -20,6 +20,7 @@ export abstract class SauceDemoBasePage extends BasePage {
         filter: '//select[@data-test="product-sort-container"]',
         toast: '//h3[@data-test="error"]',
         item : {
+            allCards : '//div[@data-test="inventory-item"]',
             card: '//div[@data-test="inventory-item" and .//div[@data-test="inventory-item-name" and contains(text(),"[TO_CHANGE]")]]',
             name: '//div[@data-test="inventory-item-name"]',
             desc: '//div[@data-test="inventory-item-desc"]',
@@ -27,6 +28,10 @@ export abstract class SauceDemoBasePage extends BasePage {
             button: '//button'
         },
     }
+    /**
+     * Opens the menu if needed, then selects the requested menu entry.
+     * @param menu The menu entry to select.
+     */
     async menuSelect(menu:keyof typeof this.commonLocators.menuChoices){
         let menuVisible = await this.page.locator(this.commonLocators.menuChoices[menu]).isVisible()
         if(!menuVisible) await this.click(this.commonLocators.burgerMenu)
@@ -34,6 +39,10 @@ export abstract class SauceDemoBasePage extends BasePage {
 
     }
 
+    /**
+     * Sorts the inventory by the selected order.
+     * @param value The sort order: name ascending/descending or price ascending/descending.
+     */
     async filter(value: 'za'|'az'|'lohi'|'hilo'){
         let target = this.page.locator(this.commonLocators.filter)
         await target.selectOption({value:value})
@@ -41,14 +50,23 @@ export abstract class SauceDemoBasePage extends BasePage {
 
     }
 
+    /**
+     * Asserts that the error toast contains the expected message.
+     * @param msg The message expected in the toast.
+     */
     async verifyToast(msg: string){
         let target = this.page.locator(this.commonLocators.toast)
         await expect(target).toContainText(msg, {ignoreCase:true})
 
     }
 
+    /**
+     * Reads details for the named inventory items.
+     * @param itemsName Item names to look up.
+     * @returns Item details keyed by item name.
+     */
     async getItemDetails(...itemsName:string[]){
-        let items : Record<string,any> = {}
+        let items : Record<string,any> = []
         for(let item of itemsName){
             let card = this.page.locator(this.commonLocators.item.card.replace('[TO_CHANGE]',item))
             let [name,desc, price, button] = await Promise.all([
@@ -60,6 +78,27 @@ export abstract class SauceDemoBasePage extends BasePage {
 
             let status:string = button === 'Remove' ? 'in-cart' : 'not-in-cart' 
             items[name] = {'description':desc, 'price':price, 'status': status}
+        }
+        return items
+    }
+
+    /**
+     * Reads details for every inventory card currently displayed.
+     * @returns Item details keyed by each item's displayed name.
+     */
+    async getAllItemsDetails(){
+        const allItems = this.page.locator(this.commonLocators.item.allCards)
+        const itemCount = await allItems.count()
+        let items : Record<string,any> = []
+        
+        for(let index = 0; index < itemCount; index++){
+            const item = allItems.nth(index)
+            let [name,desc, price] = await Promise.all([
+                item.locator(this.commonLocators.item.name).innerText(),
+                item.locator(this.commonLocators.item.desc).innerText(),
+                (await (item.locator(this.commonLocators.item.price).innerText())).split('$').slice(1),
+            ])
+            items[name] = {'description':desc, 'price':price,'status':'in-cart'}
         }
         return items
     }

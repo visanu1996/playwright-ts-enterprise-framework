@@ -10,10 +10,15 @@ export class ProductPage extends SauceDemoBasePage{
         header:'text=Products',        
     }
 
+    /** Asserts that the product inventory page is visible. */
     async verifyPageArrive(){
         await this.verifyLocator(this.productLocators.header)
     }
 
+    /**
+     * Adds the named items to the cart when they are not already there.
+     * @param itemsName Names of the items to add.
+     */
     async addItems(...itemsName:string[]){
         for(let item of itemsName){
             let card = this.page.locator(this.commonLocators.item.card.replace('[TO_CHANGE]',item))
@@ -30,6 +35,10 @@ export class ProductPage extends SauceDemoBasePage{
     }
 
 
+    /**
+     * Removes the named items from the cart when they are currently in it.
+     * @param itemsName Names of the items to remove.
+     */
     async removeItems(...itemsName:string[]){
         for(let item of itemsName){
             let card = this.page.locator(this.commonLocators.item.card.replace('[TO_CHANGE]',item))
@@ -45,14 +54,19 @@ export class ProductPage extends SauceDemoBasePage{
         }
     }
 
+    /**
+     * Asserts the cart badge count, or that the badge is hidden when empty.
+     * @param itemsCount Expected number of items in the cart.
+     */
     async verifyBadge(itemsCount: number){
         let target = this.page.locator(this.commonLocators.cartBadge)
         if(itemsCount > 0){
-            await expect(target).toContainText(itemsCount.toString())
+            await expect(target).toContainText(String(itemsCount))
         } else await expect(target).not.toBeVisible()
 
     }
 
+    /** Opens the cart page from the product inventory. */
     async enterCartPage(){
         await this.click(this.commonLocators.cart)
         await expect(this.page.locator(this.productLocators.header)).not.toBeVisible()
