@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test'
-
+import * as path from 'node:path';
 /**
  * Shared browser-page utilities used across all Playwright page object classes.
  * Provides common actions such as clicking, filling inputs, verifying visibility,
@@ -17,7 +17,8 @@ export abstract class BasePage {
         let files:string[] = []
 
         for(let file in fileNames){
-            files.push('../data/'+file)
+            // files.push('../data/'+file)
+            files.push(path.join(__dirname,'../data/',file))
         }
 
         await target.setInputFiles(files)

@@ -69,6 +69,19 @@ This repository is intended to showcase how to build automation for modern enter
 npm install
 ```
 
+### Initialize TypeScript and CSV support
+
+Run these commands when setting up the project for the first time:
+
+```bash
+npm install --save-dev typescript
+npx tsc --init
+npm install --save-dev csv-parse
+npm install --save-dev csv-stringify
+```
+
+The TypeScript and CSV parser dependencies are saved in `package.json`. The `tsc --init` command creates a `tsconfig.json` file.
+
 ### Install Playwright browsers
 
 ```bash
