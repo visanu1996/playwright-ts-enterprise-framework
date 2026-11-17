@@ -1,32 +1,17 @@
 # Enterprise Playwright Automation
 
-This project is a Playwright + TypeScript automation suite designed as a portfolio-ready example for enterprise-grade web and API testing. It demonstrates a structured approach to test automation across multiple web applications, reusable page objects, configuration management, and validation flows that are commonly required in real-world QA engineering teams.
+This project is a Playwright and TypeScript UI automation suite for the Sauce Demo application. It uses the Page Object Model (POM) and includes login, product, cart, checkout, and CSV-driven checkout tests.
 
 ## Project goal
 
-Build a clean, scalable, and maintainable automation framework that can be used to validate:
-
-- Multi-application enterprise web workflows
-- Authentication and authorization flows
-- UI regression and functional checks
-- API validation
-- Reusable test architecture for growing product ecosystems
+Validate the main Sauce Demo shopping workflows, including login, product sorting, cart management, checkout form validation, and order completion.
 
 ## Tech stack
 
 - Playwright
 - TypeScript
 - Page Object Model (POM)
-
-## Why this project matters
-
-This repository is intended to showcase how to build automation for modern enterprise environments where teams often need to test:
-
-- Multiple business applications and portals
-- Complex user journeys across pages and modules
-- Reusable components and page abstractions
-- API endpoints alongside UI flows
-- Secure configuration handling for credentials and environment settings
+- `csv-parse` and `csv-stringify` for CSV test data and result summaries
 
 ## Project structure
 
@@ -38,23 +23,35 @@ This repository is intended to showcase how to build automation for modern enter
 ├── src/
 │   ├── apps/
 │   │   └── saucedemo/
-│   │       ├── pages/
 │   │       ├── SauceDemoBasePage.ts
 │   │       ├── SauceDemoFacade.ts
-│   │       └── ...
+│   │       └── pages/
+│   │           ├── CartPage.ts
+│   │           ├── CheckoutPage.ts
+│   │           ├── LoginPage.ts
+│   │           └── ProductPage.ts
 │   ├── core/
 │   │   └── BasePage.ts
-│   └── data/
+│   ├── data/
+│   │   └── saucedemo/
+│   │       └── checkout-cases.csv
+│   └── utils/
+│       ├── csvReader.ts
+│       └── writeCSV.ts
 ├── tests/
-│   ├── example.spec.ts
-│   └── sd-login.spec.ts
+│   └── saucedemo/
+│       ├── cart.spec.ts
+│       ├── checkout.spec.ts
+│       ├── data-driven.spec.ts
+│       ├── login.spec.ts
+│       └── product.spec.ts
 ├── .gitignore
 ├── package.json
 ├── playwright.config.ts
-├── playwright-report/
-├── test-results/
 └── README.md
 ```
+
+Playwright reports and test results are generated under `playwright-report/` and `test-results/`; these output folders are ignored by Git.
 
 ## Getting started
 
@@ -69,18 +66,7 @@ This repository is intended to showcase how to build automation for modern enter
 npm install
 ```
 
-### Initialize TypeScript and CSV support
-
-Run these commands when setting up the project for the first time:
-
-```bash
-npm install --save-dev typescript
-npx tsc --init
-npm install --save-dev csv-parse
-npm install --save-dev csv-stringify
-```
-
-The TypeScript and CSV parser dependencies are saved in `package.json`. The `tsc --init` command creates a `tsconfig.json` file.
+TypeScript, `csv-parse`, and `csv-stringify` are already listed in `package.json`. The project includes `tsconfig.json`, so `npm install` installs the required packages without needing to initialize TypeScript again.
 
 ### Install Playwright browsers
 
@@ -99,7 +85,13 @@ npx playwright test
 ### Run a specific test file
 
 ```bash
-npx playwright test tests/sd-login.spec.ts
+npx playwright test tests/saucedemo/login.spec.ts
+```
+
+### Run the CSV-driven checkout tests
+
+```bash
+npx playwright test tests/saucedemo/data-driven.spec.ts
 ```
 
 ### Run with UI mode
@@ -114,9 +106,11 @@ npx playwright test --ui
 npx playwright show-report
 ```
 
+The CSV-driven checkout cases are defined in `src/data/saucedemo/checkout-cases.csv`. Each row becomes a test case, and the run writes a timestamped result summary to `test-results/saucedemo/`. Named workflow steps are visible in the Playwright HTML report.
+
 ## Configuration
 
-The project uses `playwright.config.ts` for browser configuration, retry strategy, timeout settings, reporters, and global test settings. The `config/` directory is used to separate environment URLs and credentials from tests and page objects.
+The project uses `playwright.config.ts` for browser configuration, retry strategy, timeouts, reporting, and global test settings. The `config/` directory contains the application URL and Sauce Demo test credentials.
 
 Important note:
 
@@ -125,37 +119,33 @@ Important note:
 
 ## Testing approach
 
-This project follows a maintainable automation structure:
+The project separates tests, page objects, shared browser helpers, and CSV utilities:
 
 - `tests/`: end-to-end scenarios written for business flows
 - `src/apps/.../pages`: page-specific selectors and actions
-- `src/apps/.../SauceDemoFacade.ts`: a high-level app abstraction for reuse
+- `src/apps/.../SauceDemoFacade.ts`: access to the application page objects
 - `src/core/BasePage.ts`: shared browser helper methods
+- `src/utils/`: CSV input and result-summary helpers
+- `src/data/saucedemo/`: CSV test data
 - `config/`: environment and test setup values
-
-This structure makes it easier to scale when multiple websites, modules, or APIs are added to the portfolio project.
 
 ## Portfolio use-case
 
-This repository is intentionally structured to demonstrate strong QA automation skills expected in enterprise environments:
+This repository demonstrates:
 
-- Clear folder organization
-- Reusable page objects
-- Centralized configuration
-- Support for multi-scenario testing
-- Easy extension for additional applications and APIs
-- Organized reporting and execution flow
+- Page Object Model organization
+- Reusable page-level actions and assertions
+- CSV-driven test scenarios
+- Playwright HTML reporting and trace capture on failure
 
 ## Future enhancements
 
 This project can be expanded with:
 
 - API testing with `fetch` or dedicated API clients
-- Environment-based config (`dev`, `staging`, `prod`)
-- CI/CD integration with GitHub Actions or Azure DevOps
+- Extend the framework to support additional web applications and API testing as the portfolio grows
 - Data-driven test scenarios
 - Test result dashboards and artifacts
-- Cross-browser and mobile coverage
 
 ## License
 
